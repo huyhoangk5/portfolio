@@ -8,6 +8,129 @@ function App() {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [activeProject, setActiveProject] = useState(0);
+  const [dragStartX, setDragStartX] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [hasDragged, setHasDragged] = useState<boolean>(false);
+
+  const projects = [
+    {
+      id: 1,
+      num: '01',
+      title: t('portfolio.project1Title'),
+      desc: t('portfolio.project1Desc'),
+      image: 'img/portfolio/project1.jpg',
+      tag: 'Live Demo',
+      tagColor: '#e54b4b',
+      tech: ['Quarkus 3.15', 'Java 21', 'Redis', 'LangChain4j', 'React', 'Render', 'Vercel'],
+      buttons: [
+        {
+          label: `${t('portfolio.liveDemo')} ↗`,
+          href: 'https://personal-finance-manager-quarkus-fe.vercel.app',
+          primary: true,
+        },
+        {
+          label: t('portfolio.githubBe'),
+          href: 'https://github.com/huyhoangk5/personal-finance-manager-quarkus',
+          primary: false,
+        },
+        {
+          label: t('portfolio.githubFe'),
+          href: 'https://github.com/huyhoangk5/personal-finance-manager-quarkus-fe',
+          primary: false,
+        },
+      ],
+    },
+    {
+      id: 2,
+      num: '02',
+      title: t('portfolio.project2Title'),
+      desc: t('portfolio.project2Desc'),
+      image: 'img/portfolio/project-ems.jpg',
+      tag: 'Full-Stack System',
+      tagColor: '#10b981',
+      tech: ['Spring Boot 3.2', 'Java 17', 'JWT & Security', 'MySQL', 'React 18', 'Docker Compose'],
+      buttons: [
+        {
+          label: `${t('portfolio.githubRepo')} ↗`,
+          href: 'https://github.com/huyhoangk5/ems-project',
+          primary: true,
+        },
+        {
+          label: t('portfolio.backend'),
+          href: 'https://github.com/huyhoangk5/ems-project/tree/main/ems-backend',
+          primary: false,
+        },
+        {
+          label: 'Frontend',
+          href: 'https://github.com/huyhoangk5/ems-project/tree/main/ems-frontend',
+          primary: false,
+        },
+      ],
+    },
+    {
+      id: 3,
+      num: '03',
+      title: t('portfolio.project3Title'),
+      desc: t('portfolio.project3Desc'),
+      image: 'img/portfolio/project2.jpg',
+      tag: 'Real-Time App',
+      tagColor: '#3182ce',
+      tech: ['Spring Boot', 'WebSocket', 'Apache Kafka', 'Redis', 'Docker Compose', 'React'],
+      buttons: [
+        {
+          label: `${t('portfolio.githubBe')} ↗`,
+          href: 'https://github.com/huyhoangk5/fakebook-backend',
+          primary: true,
+        },
+        {
+          label: `${t('portfolio.githubFe')} ↗`,
+          href: 'https://github.com/huyhoangk5/fakebook-frontend',
+          primary: false,
+        },
+      ],
+    },
+  ];
+
+  const nextProject = () => {
+    setActiveProject((prev) => (prev < projects.length - 1 ? prev + 1 : 0));
+  };
+
+  const prevProject = () => {
+    setActiveProject((prev) => (prev > 0 ? prev - 1 : projects.length - 1));
+  };
+
+  const handleDragStart = (clientX: number) => {
+    setIsDragging(true);
+    setDragStartX(clientX);
+    setHasDragged(false);
+  };
+
+  const handleDragMove = (clientX: number) => {
+    if (!isDragging || dragStartX === null) return;
+    const diff = clientX - dragStartX;
+    if (Math.abs(diff) > 5) {
+      setHasDragged(true);
+    }
+    if ((activeProject === 0 && diff > 0) || (activeProject === projects.length - 1 && diff < 0)) {
+      setDragOffset(diff * 0.3);
+    } else {
+      setDragOffset(diff);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    if (dragOffset < -60) {
+      nextProject();
+    } else if (dragOffset > 60) {
+      prevProject();
+    }
+    setIsDragging(false);
+    setDragStartX(null);
+    setDragOffset(0);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -624,347 +747,409 @@ function App() {
                   <h3>{t('portfolio.title')}</h3>
                   <span>{t('portfolio.subtitle')}</span>
                 </div>
+                {/* Slideshow Category / Project Tabs */}
                 <div
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-                    gap: '30px',
+                    display: 'flex',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    marginBottom: '28px',
                     width: '100%',
-                    clear: 'both',
                   }}
                 >
-                  {/* PROJECT 1 */}
-                  <div
-                    className="project_card"
-                    style={{
-                      background: '#1a1f2c',
-                      borderRadius: '14px',
-                      overflow: 'hidden',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    }}
-                  >
-                    <div style={{ position: 'relative', overflow: 'hidden', height: '230px' }}>
-                      <img
-                        src="img/portfolio/project1.jpg"
-                        alt="Personal Finance Manager"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      <div
+                  {projects.map((proj, idx) => {
+                    const isActive = activeProject === idx;
+                    return (
+                      <button
+                        key={proj.id}
+                        type="button"
+                        onClick={() => setActiveProject(idx)}
                         style={{
-                          position: 'absolute',
-                          top: '15px',
-                          right: '15px',
-                          background: '#e54b4b',
-                          color: '#fff',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          padding: '4px 10px',
-                          borderRadius: '20px',
+                          background: isActive ? '#e54b4b' : 'rgba(255,255,255,0.06)',
+                          color: isActive ? '#fff' : '#a0aec0',
+                          border: isActive ? '1px solid #e54b4b' : '1px solid rgba(255,255,255,0.1)',
+                          padding: '10px 20px',
+                          borderRadius: '30px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          transition: 'all 0.3s ease',
+                          boxShadow: isActive ? '0 8px 24px rgba(229, 75, 75, 0.35)' : 'none',
                         }}
                       >
-                        Live Demo
-                      </div>
-                    </div>
-                    <div style={{ padding: '25px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>
-                        {t('portfolio.project1Title')}
-                      </h3>
-                      <p style={{ color: '#a0aec0', fontSize: '14px', lineHeight: '1.6', marginBottom: '18px' }}>
-                        {t('portfolio.project1Desc')}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '22px' }}>
-                        {['Quarkus 3.15', 'Java 21', 'Redis', 'LangChain4j', 'React', 'Render', 'Vercel'].map((badge) => (
-                          <span
-                            key={badge}
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            background: isActive ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.08)',
+                            color: '#fff',
+                          }}
+                        >
+                          {proj.num}
+                        </span>
+                        <span>{proj.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Slideshow Wrapper */}
+                <div
+                  style={{
+                    position: 'relative',
+                    maxWidth: '1000px',
+                    margin: '0 auto',
+                    width: '100%',
+                  }}
+                >
+                  {/* Left Arrow Button */}
+                  <button
+                    type="button"
+                    onClick={prevProject}
+                    aria-label={t('portfolio.prevProject')}
+                    style={{
+                      position: 'absolute',
+                      left: '-20px',
+                      top: '40%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 20,
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '50%',
+                      background: 'rgba(20, 24, 35, 0.92)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                      transition: 'all 0.25s ease',
+                      outline: 'none',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#e54b4b';
+                      e.currentTarget.style.borderColor = '#e54b4b';
+                      e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(20, 24, 35, 0.92)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                      e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Right Arrow Button */}
+                  <button
+                    type="button"
+                    onClick={nextProject}
+                    aria-label={t('portfolio.nextProject')}
+                    style={{
+                      position: 'absolute',
+                      right: '-20px',
+                      top: '40%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 20,
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '50%',
+                      background: 'rgba(20, 24, 35, 0.92)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                      transition: 'all 0.25s ease',
+                      outline: 'none',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#e54b4b';
+                      e.currentTarget.style.borderColor = '#e54b4b';
+                      e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(20, 24, 35, 0.92)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                      e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Viewport with grab cursor */}
+                  <div
+                    style={{
+                      overflow: 'hidden',
+                      borderRadius: '16px',
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                      userSelect: 'none',
+                    }}
+                    onMouseDown={(e) => handleDragStart(e.clientX)}
+                    onMouseMove={(e) => handleDragMove(e.clientX)}
+                    onMouseUp={handleDragEnd}
+                    onMouseLeave={handleDragEnd}
+                    onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+                    onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+                    onTouchEnd={handleDragEnd}
+                  >
+                    {/* Slides Track */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        transform: `translateX(calc(-${activeProject * 100}% + ${dragOffset}px))`,
+                        transition: isDragging ? 'none' : 'transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1)',
+                        width: '100%',
+                      }}
+                    >
+                      {projects.map((proj) => (
+                        <div
+                          key={proj.id}
+                          style={{
+                            flex: '0 0 100%',
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            padding: '2px',
+                          }}
+                        >
+                          <div
+                            className="project_card"
                             style={{
-                              fontSize: '11px',
-                              padding: '3px 8px',
-                              borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.07)',
-                              color: '#cbd5e0',
+                              background: '#1a1f2c',
+                              borderRadius: '16px',
+                              overflow: 'hidden',
                               border: '1px solid rgba(255,255,255,0.1)',
+                              boxShadow: 'none',
+                              display: 'flex',
+                              flexDirection: 'column',
                             }}
                           >
-                            {badge}
-                          </span>
-                        ))}
-                      </div>
-                      <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                        <a
-                          href="https://personal-finance-manager-quarkus-fe.vercel.app"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            flex: 1,
-                            textAlign: 'center',
-                            padding: '10px 14px',
-                            background: '#e54b4b',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {t('portfolio.liveDemo')} ↗
-                        </a>
-                        <a
-                          href="https://github.com/huyhoangk5/personal-finance-manager-quarkus"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.08)',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            textDecoration: 'none',
-                          }}
-                          title="GitHub Backend"
-                        >
-                          {t('portfolio.githubBe')}
-                        </a>
-                        <a
-                          href="https://github.com/huyhoangk5/personal-finance-manager-quarkus-fe"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.08)',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            textDecoration: 'none',
-                          }}
-                          title="GitHub Frontend"
-                        >
-                          {t('portfolio.githubFe')}
-                        </a>
-                      </div>
+                            {/* Card Image Banner */}
+                            <div
+                              style={{
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '390px',
+                                background: '#0e121a',
+                              }}
+                            >
+                              <img
+                                src={proj.image}
+                                alt={proj.title}
+                                draggable={false}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  objectPosition: 'top center',
+                                  display: 'block',
+                                }}
+                              />
+                              {/* Top-Left Project Counter */}
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: '18px',
+                                  left: '18px',
+                                  background: 'rgba(15, 20, 31, 0.85)',
+                                  backdropFilter: 'blur(8px)',
+                                  color: '#fff',
+                                  fontSize: '12px',
+                                  fontWeight: 700,
+                                  letterSpacing: '1px',
+                                  padding: '6px 14px',
+                                  borderRadius: '20px',
+                                  border: '1px solid rgba(255,255,255,0.15)',
+                                }}
+                              >
+                                {proj.num} / 03
+                              </div>
+
+                              {/* Top-Right Category Badge */}
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: '18px',
+                                  right: '18px',
+                                  background: proj.tagColor,
+                                  color: '#fff',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px',
+                                  padding: '6px 14px',
+                                  borderRadius: '20px',
+                                  boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                }}
+                              >
+                                {proj.tag}
+                              </div>
+                            </div>
+
+                            {/* Card Content */}
+                            <div
+                              style={{
+                                padding: '30px 35px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                              }}
+                            >
+                              <h3
+                                style={{
+                                  fontSize: '24px',
+                                  fontWeight: 700,
+                                  color: '#fff',
+                                  marginBottom: '14px',
+                                }}
+                              >
+                                {proj.title}
+                              </h3>
+                              <p
+                                style={{
+                                  color: '#cbd5e0',
+                                  fontSize: '15px',
+                                  lineHeight: '1.7',
+                                  marginBottom: '20px',
+                                }}
+                              >
+                                {proj.desc}
+                              </p>
+
+                              {/* Tech Stack Badges */}
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: '10px',
+                                  marginBottom: '26px',
+                                }}
+                              >
+                                {proj.tech.map((badge) => (
+                                  <span
+                                    key={badge}
+                                    style={{
+                                      fontSize: '12px',
+                                      fontWeight: 500,
+                                      padding: '5px 12px',
+                                      borderRadius: '6px',
+                                      background: 'rgba(255,255,255,0.07)',
+                                      color: '#cbd5e0',
+                                      border: '1px solid rgba(255,255,255,0.12)',
+                                    }}
+                                  >
+                                    {badge}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div
+                                style={{
+                                  marginTop: 'auto',
+                                  display: 'flex',
+                                  gap: '12px',
+                                  flexWrap: 'wrap',
+                                }}
+                              >
+                                {proj.buttons.map((btn, btnIdx) => (
+                                  <a
+                                    key={btnIdx}
+                                    href={btn.href}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(e) => {
+                                      if (hasDragged) {
+                                        e.preventDefault();
+                                      }
+                                    }}
+                                    style={{
+                                      padding: '11px 22px',
+                                      background: btn.primary ? '#e54b4b' : 'rgba(255,255,255,0.08)',
+                                      color: '#fff',
+                                      borderRadius: '7px',
+                                      fontSize: '14px',
+                                      fontWeight: 600,
+                                      textDecoration: 'none',
+                                      border: btn.primary ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                                      transition: 'all 0.25s ease',
+                                      boxShadow: btn.primary ? '0 6px 18px rgba(229, 75, 75, 0.3)' : 'none',
+                                    }}
+                                  >
+                                    {btn.label}
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  {/* PROJECT 2: EMS */}
+                  {/* Slideshow Bottom Navigation & Indicators */}
                   <div
-                    className="project_card"
                     style={{
-                      background: '#1a1f2c',
-                      borderRadius: '14px',
-                      overflow: 'hidden',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
                       display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginTop: '22px',
+                      padding: '0 6px',
+                      flexWrap: 'wrap',
+                      gap: '15px',
                     }}
                   >
-                    <div style={{ position: 'relative', overflow: 'hidden', height: '230px' }}>
-                      <img
-                        src="img/portfolio/project-ems.jpg"
-                        alt="EMS - Event Management System"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: '15px',
-                          right: '15px',
-                          background: '#10b981',
-                          color: '#fff',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          padding: '4px 10px',
-                          borderRadius: '20px',
-                        }}
-                      >
-                        Full-Stack System
-                      </div>
-                    </div>
-                    <div style={{ padding: '25px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>
-                        {t('portfolio.project2Title')}
-                      </h3>
-                      <p style={{ color: '#a0aec0', fontSize: '14px', lineHeight: '1.6', marginBottom: '18px' }}>
-                        {t('portfolio.project2Desc')}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '22px' }}>
-                        {['Spring Boot 3.2', 'Java 17', 'JWT & Security', 'MySQL', 'React 18', 'Docker Compose'].map((badge) => (
-                          <span
-                            key={badge}
+                    {/* Dots indicator */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {projects.map((_, dotIdx) => {
+                        const isActive = activeProject === dotIdx;
+                        return (
+                          <button
+                            key={dotIdx}
+                            type="button"
+                            onClick={() => setActiveProject(dotIdx)}
+                            aria-label={`Slide ${dotIdx + 1}`}
                             style={{
-                              fontSize: '11px',
-                              padding: '3px 8px',
-                              borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.07)',
-                              color: '#cbd5e0',
-                              border: '1px solid rgba(255,255,255,0.1)',
+                              width: isActive ? '32px' : '10px',
+                              height: '10px',
+                              borderRadius: '10px',
+                              background: isActive ? '#e54b4b' : 'rgba(255,255,255,0.25)',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: 0,
+                              transition: 'all 0.3s ease',
                             }}
-                          >
-                            {badge}
-                          </span>
-                        ))}
-                      </div>
-                      <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                        <a
-                          href="https://github.com/huyhoangk5/ems-project"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            flex: 1,
-                            textAlign: 'center',
-                            padding: '10px 14px',
-                            background: '#e54b4b',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {t('portfolio.githubRepo')} ↗
-                        </a>
-                        <a
-                          href="https://github.com/huyhoangk5/ems-project/tree/main/ems-backend"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.08)',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            textDecoration: 'none',
-                          }}
-                          title="Backend Source"
-                        >
-                          {t('portfolio.backend')}
-                        </a>
-                        <a
-                          href="https://github.com/huyhoangk5/ems-project/tree/main/ems-frontend"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.08)',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            textDecoration: 'none',
-                          }}
-                          title="Frontend Source"
-                        >
-                          Frontend
-                        </a>
-                      </div>
+                          />
+                        );
+                      })}
                     </div>
-                  </div>
 
-                  {/* PROJECT 3: Social Network */}
-                  <div
-                    className="project_card"
-                    style={{
-                      background: '#1a1f2c',
-                      borderRadius: '14px',
-                      overflow: 'hidden',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    }}
-                  >
-                    <div style={{ position: 'relative', overflow: 'hidden', height: '230px' }}>
-                      <img
-                        src="img/portfolio/project2.jpg"
-                        alt="Social Network Website"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: '15px',
-                          right: '15px',
-                          background: '#3182ce',
-                          color: '#fff',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          padding: '4px 10px',
-                          borderRadius: '20px',
-                        }}
-                      >
-                        Real-Time App
-                      </div>
-                    </div>
-                    <div style={{ padding: '25px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>
-                        {t('portfolio.project3Title')}
-                      </h3>
-                      <p style={{ color: '#a0aec0', fontSize: '14px', lineHeight: '1.6', marginBottom: '18px' }}>
-                        {t('portfolio.project3Desc')}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '22px' }}>
-                        {['Spring Boot', 'WebSocket', 'Apache Kafka', 'Redis', 'Docker Compose', 'React'].map((badge) => (
-                          <span
-                            key={badge}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 8px',
-                              borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.07)',
-                              color: '#cbd5e0',
-                              border: '1px solid rgba(255,255,255,0.1)',
-                            }}
-                          >
-                            {badge}
-                          </span>
-                        ))}
-                      </div>
-                      <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                        <a
-                          href="https://github.com/huyhoangk5/fakebook-backend"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            flex: 1,
-                            textAlign: 'center',
-                            padding: '10px 14px',
-                            background: '#e54b4b',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {t('portfolio.githubBe')} ↗
-                        </a>
-                        <a
-                          href="https://github.com/huyhoangk5/fakebook-frontend"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{
-                            flex: 1,
-                            textAlign: 'center',
-                            padding: '10px 14px',
-                            background: 'rgba(255,255,255,0.08)',
-                            color: '#fff',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {t('portfolio.githubFe')} ↗
-                        </a>
-                      </div>
-                    </div>
+
+                    {/* Numeric counter */}
+                    <span
+                      style={{
+                        color: '#a0aec0',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        letterSpacing: '1px',
+                      }}
+                    >
+                      0{activeProject + 1} / 03
+                    </span>
                   </div>
                 </div>
               </div>

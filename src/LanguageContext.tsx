@@ -93,6 +93,9 @@ interface Translations {
     project2Desc: string;
     project3Title: string;
     project3Desc: string;
+    swipeHint: string;
+    prevProject: string;
+    nextProject: string;
   };
   achievements: {
     title: string;
@@ -252,6 +255,9 @@ const translations: Record<Language, Translations> = {
       project3Title: 'Social Network Website',
       project3Desc:
         'Real-time interactive social platform featuring instant messaging via WebSocket (STOMP over SockJS), event streaming notifications with Apache Kafka, Redis user caching, and full Docker Compose containerization.',
+      swipeHint: '← Drag left / right or click buttons to view projects →',
+      prevProject: 'Previous Project',
+      nextProject: 'Next Project',
     },
     achievements: {
       title: 'Achievements & Activities',
@@ -391,12 +397,15 @@ const translations: Record<Language, Translations> = {
       project1Title: 'Personal Finance Manager',
       project1Desc:
         'Ứng dụng web quản lý tài chính full-stack với 46 REST API endpoint, xác thực JWT, thu hồi token tức thời qua Redis, giới hạn tần suất truy cập sliding-window và tích hợp trợ lý chatbot thông minh LangChain4j + OpenAI.',
-      project2Title: 'EMS - Quản Lý Sự Kiện Học Viện Ngân Hàng',
+      project2Title: 'EMS - Quản Lý Tham Gia Sự Kiện',
       project2Desc:
         'Hệ thống quản lý và đăng ký sự kiện full-stack xây dựng cho Học viện Ngân hàng. Phân quyền chặt chẽ 4 vai trò (Admin, Ban quản lý, CLB, Sinh viên), quy trình kiểm duyệt sự kiện nhiều bước, kiểm soát slot đăng ký và đóng gói triển khai toàn diện với Docker Compose.',
       project3Title: 'Social Network Website',
       project3Desc:
         'Mạng xã hội tương tác thời gian thực với tính năng nhắn tin tức thì qua WebSocket (STOMP over SockJS), luồng xử lý thông báo với Apache Kafka, cache dữ liệu người dùng qua Redis và đóng gói toàn bộ hệ thống bằng Docker Compose.',
+      swipeHint: '← Kéo chuột qua lại trái phải hoặc nhấn nút để xem dự án →',
+      prevProject: 'Dự án trước',
+      nextProject: 'Dự án tiếp theo',
     },
     achievements: {
       title: 'Thành Tích & Hoạt Động',
