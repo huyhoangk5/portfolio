@@ -84,12 +84,15 @@ interface Translations {
     backend: string;
     realtime: string;
     liveDemo: string;
+    githubRepo: string;
     githubBe: string;
     githubFe: string;
     project1Title: string;
     project1Desc: string;
     project2Title: string;
     project2Desc: string;
+    project3Title: string;
+    project3Desc: string;
   };
   achievements: {
     title: string;
@@ -237,13 +240,17 @@ const translations: Record<Language, Translations> = {
       backend: 'Backend',
       realtime: 'Real-time',
       liveDemo: 'Live Demo',
+      githubRepo: 'GitHub Repo',
       githubBe: 'GitHub Backend',
       githubFe: 'GitHub Frontend',
       project1Title: 'Personal Finance Manager',
       project1Desc:
         'Full-stack financial management web application featuring 46 REST API endpoints, JWT authentication, sliding window rate limiting, Redis token invalidation, and LangChain4j + OpenAI conversational chatbot.',
-      project2Title: 'Social Network Website',
+      project2Title: 'EMS - Event Management System',
       project2Desc:
+        'Full-stack event management and registration platform built for Banking Academy. Features role-based access control (Admin, Approver, Club, Student), multi-step approval workflows, registration limits, and multi-container Docker Compose orchestration.',
+      project3Title: 'Social Network Website',
+      project3Desc:
         'Real-time interactive social platform featuring instant messaging via WebSocket (STOMP over SockJS), event streaming notifications with Apache Kafka, Redis user caching, and full Docker Compose containerization.',
     },
     achievements: {
@@ -255,7 +262,7 @@ const translations: Record<Language, Translations> = {
       scholarshipNumber: '02',
       scholarshipLabel: 'Academic Scholarships',
       scholarshipDesc: 'HaUI Study Encouragement Scholarships (08/2024 & 03/2025)',
-      projectsNumber: '02+',
+      projectsNumber: '03+',
       projectsLabel: 'Full-Stack Projects',
       projectsDesc: 'End-to-end architectures ready for production deployment',
       researchTitle: 'Scientific Research at HaUI',
@@ -378,13 +385,17 @@ const translations: Record<Language, Translations> = {
       backend: 'Backend',
       realtime: 'Real-time',
       liveDemo: 'Xem trực tiếp',
+      githubRepo: 'Mã nguồn GitHub',
       githubBe: 'GitHub Backend',
       githubFe: 'GitHub Frontend',
       project1Title: 'Personal Finance Manager',
       project1Desc:
         'Ứng dụng web quản lý tài chính full-stack với 46 REST API endpoint, xác thực JWT, thu hồi token tức thời qua Redis, giới hạn tần suất truy cập sliding-window và tích hợp trợ lý chatbot thông minh LangChain4j + OpenAI.',
-      project2Title: 'Social Network Website',
+      project2Title: 'EMS - Quản Lý Sự Kiện Học Viện Ngân Hàng',
       project2Desc:
+        'Hệ thống quản lý và đăng ký sự kiện full-stack xây dựng cho Học viện Ngân hàng. Phân quyền chặt chẽ 4 vai trò (Admin, Ban quản lý, CLB, Sinh viên), quy trình kiểm duyệt sự kiện nhiều bước, kiểm soát slot đăng ký và đóng gói triển khai toàn diện với Docker Compose.',
+      project3Title: 'Social Network Website',
+      project3Desc:
         'Mạng xã hội tương tác thời gian thực với tính năng nhắn tin tức thì qua WebSocket (STOMP over SockJS), luồng xử lý thông báo với Apache Kafka, cache dữ liệu người dùng qua Redis và đóng gói toàn bộ hệ thống bằng Docker Compose.',
     },
     achievements: {
@@ -396,7 +407,7 @@ const translations: Record<Language, Translations> = {
       scholarshipNumber: '02',
       scholarshipLabel: 'Học Bổng Khuyến Khích',
       scholarshipDesc: 'Học bổng khuyến khích học tập HaUI (08/2024 & 03/2025)',
-      projectsNumber: '02+',
+      projectsNumber: '03+',
       projectsLabel: 'Dự Án Full-Stack',
       projectsDesc: 'Hệ thống thực tế hoàn chỉnh, sẵn sàng đưa vào vận hành',
       researchTitle: 'Nghiên Cứu Khoa Học tại HaUI',

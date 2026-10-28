@@ -33,7 +33,18 @@ Trang web portfolio cá nhân của **Đoàn Huy Hoàng** – Sinh viên chuyên
   - Tích hợp chatbot trợ lý tài chính thông minh sử dụng **LangChain4j + OpenAI**.
   - Triển khai backend trên Render và frontend trên Vercel.
 
-### 2. [Social Network Website](https://github.com/huyhoangk5/fakebook-backend)
+### 2. [EMS - Event Management System](https://github.com/huyhoangk5/ems-project)
+*Hệ thống quản lý và đăng ký sự kiện cho Học viện Ngân hàng*
+- **Repository:** [GitHub Repository](https://github.com/huyhoangk5/ems-project) (Spring Boot 3.2, Java 17, React 18, MySQL 8.0, Docker Compose)
+- **Cấu trúc:** Monorepo gồm `ems-backend` (Spring Boot API), `ems-frontend` (React + Vite), `docker-compose.yml`, `db-init`
+- **Tính năng chính:**
+  - Phân quyền chặt chẽ 4 vai trò người dùng: Admin (Quản trị viên), Approver (Quản lý cấp cao), Club (Câu lạc bộ), Student (Sinh viên).
+  - Quy trình vòng đời sự kiện: Đăng tải sự kiện -> Chờ duyệt (Pending) -> Phê duyệt / Từ chối kèm lý do.
+  - Quản lý đăng ký sự kiện: Kiểm soát số lượng chỗ (slot), giới hạn thời gian đăng ký và chính sách hủy trước 24h.
+  - Dashboard thống kê sự kiện, số lượng người tham gia và danh sách đăng ký.
+  - Tự động hóa khởi động và đóng gói toàn bộ hệ thống bằng **Docker Compose** (`start.bat` / `stop.bat`).
+
+### 3. [Social Network Website](https://github.com/huyhoangk5/fakebook-backend)
 *Mạng xã hội tương tác thời gian thực*
 - **Backend:** [GitHub Repository](https://github.com/huyhoangk5/fakebook-backend) (Spring Boot, Spring Security, JPA/Hibernate)
 - **Frontend:** [GitHub Repository](https://github.com/huyhoangk5/fakebook-frontend) (React)

@@ -749,7 +749,123 @@ function App() {
                     </div>
                   </div>
 
-                  {/* PROJECT 2 */}
+                  {/* PROJECT 2: EMS */}
+                  <div
+                    className="project_card"
+                    style={{
+                      background: '#1a1f2c',
+                      borderRadius: '14px',
+                      overflow: 'hidden',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    }}
+                  >
+                    <div style={{ position: 'relative', overflow: 'hidden', height: '230px' }}>
+                      <img
+                        src="img/portfolio/project-ems.jpg"
+                        alt="EMS - Event Management System"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '15px',
+                          right: '15px',
+                          background: '#10b981',
+                          color: '#fff',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          padding: '4px 10px',
+                          borderRadius: '20px',
+                        }}
+                      >
+                        Full-Stack System
+                      </div>
+                    </div>
+                    <div style={{ padding: '25px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>
+                        {t('portfolio.project2Title')}
+                      </h3>
+                      <p style={{ color: '#a0aec0', fontSize: '14px', lineHeight: '1.6', marginBottom: '18px' }}>
+                        {t('portfolio.project2Desc')}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '22px' }}>
+                        {['Spring Boot 3.2', 'Java 17', 'JWT & Security', 'MySQL', 'React 18', 'Docker Compose'].map((badge) => (
+                          <span
+                            key={badge}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              background: 'rgba(255,255,255,0.07)',
+                              color: '#cbd5e0',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                            }}
+                          >
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                      <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        <a
+                          href="https://github.com/huyhoangk5/ems-project"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            flex: 1,
+                            textAlign: 'center',
+                            padding: '10px 14px',
+                            background: '#e54b4b',
+                            color: '#fff',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          {t('portfolio.githubRepo')} ↗
+                        </a>
+                        <a
+                          href="https://github.com/huyhoangk5/ems-project/tree/main/ems-backend"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            padding: '10px 12px',
+                            background: 'rgba(255,255,255,0.08)',
+                            color: '#fff',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            textDecoration: 'none',
+                          }}
+                          title="Backend Source"
+                        >
+                          {t('portfolio.backend')}
+                        </a>
+                        <a
+                          href="https://github.com/huyhoangk5/ems-project/tree/main/ems-frontend"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            padding: '10px 12px',
+                            background: 'rgba(255,255,255,0.08)',
+                            color: '#fff',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            textDecoration: 'none',
+                          }}
+                          title="Frontend Source"
+                        >
+                          Frontend
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PROJECT 3: Social Network */}
                   <div
                     className="project_card"
                     style={{
@@ -788,10 +904,10 @@ function App() {
                     </div>
                     <div style={{ padding: '25px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                       <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>
-                        {t('portfolio.project2Title')}
+                        {t('portfolio.project3Title')}
                       </h3>
                       <p style={{ color: '#a0aec0', fontSize: '14px', lineHeight: '1.6', marginBottom: '18px' }}>
-                        {t('portfolio.project2Desc')}
+                        {t('portfolio.project3Desc')}
                       </p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '22px' }}>
                         {['Spring Boot', 'WebSocket', 'Apache Kafka', 'Redis', 'Docker Compose', 'React'].map((badge) => (
