@@ -124,10 +124,13 @@ interface Translations {
     website: string;
     yourName: string;
     yourEmail: string;
+    yourSubject: string;
     yourMessage: string;
     sendMessage: string;
+    sending: string;
     copyright: string;
     successMessage: string;
+    errorMessage: string;
     fillRequired: string;
     labels: {
       address: string;
@@ -288,10 +291,13 @@ const translations: Record<Language, Translations> = {
       website: 'github.com/huyhoangk5',
       yourName: 'Your Name',
       yourEmail: 'Your Email',
+      yourSubject: 'Subject',
       yourMessage: 'Your Message',
       sendMessage: 'Send Message',
+      sending: 'Sending...',
       copyright: '© 2026 Đoàn Huy Hoàng. All Rights Reserved.',
-      successMessage: 'Your email client has been opened. Thank you!',
+      successMessage: 'Your message has been sent successfully. Thank you!',
+      errorMessage: 'Could not send your message. Please try again or email me directly.',
       fillRequired: 'Please fill in required fields',
       labels: {
         address: 'Address',
@@ -436,10 +442,13 @@ const translations: Record<Language, Translations> = {
       website: 'github.com/huyhoangk5',
       yourName: 'Tên của bạn',
       yourEmail: 'Email của bạn',
+      yourSubject: 'Tiêu đề',
       yourMessage: 'Tin nhắn của bạn',
       sendMessage: 'Gửi tin nhắn',
+      sending: 'Đang gửi...',
       copyright: '© 2026 Đoàn Huy Hoàng. Tất cả các quyền được bảo lưu.',
-      successMessage: 'Trình gửi email đã được mở. Cảm ơn bạn!',
+      successMessage: 'Tin nhắn đã được gửi thành công. Cảm ơn bạn!',
+      errorMessage: 'Không thể gửi tin nhắn. Vui lòng thử lại hoặc gửi email trực tiếp cho tôi.',
       fillRequired: 'Vui lòng điền thông tin bắt buộc',
       labels: {
         address: 'Địa chỉ',

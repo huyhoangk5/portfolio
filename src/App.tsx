@@ -4,9 +4,14 @@ import React, { useState } from 'react';
 import { useLanguage } from './LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
+// Web3Forms public access key (safe to expose in frontend). Get it at https://web3forms.com
+const WEB3FORMS_ACCESS_KEY = '93b894fe-5e6e-4e27-a12f-d157e36e3917';
+
 function App() {
   const { t } = useLanguage();
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isSending, setIsSending] = useState(false);
+  const [statusType, setStatusType] = useState<'success' | 'error'>('success');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [activeProject, setActiveProject] = useState(0);
   const [dragStartX, setDragStartX] = useState<number | null>(null);
@@ -138,21 +143,52 @@ function App() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSendMessage = (e: React.MouseEvent | React.FormEvent) => {
+  const handleSendMessage = async (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+    if (isSending) return;
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.subject.trim() ||
+      !formData.message.trim()
+    ) {
+      setStatusType('error');
       setStatusMessage(t('contact.fillRequired'));
       return;
     }
 
-    const mailtoLink = `mailto:hthoang2k5@gmail.com?subject=${encodeURIComponent(
-      `Portfolio Inquiry from ${formData.name}`
-    )}&body=${encodeURIComponent(
-      `Sender: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    )}`;
-
-    window.location.href = mailtoLink;
-    setStatusMessage(t('contact.successMessage'));
+    setIsSending(true);
+    setStatusMessage(null);
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          from_name: 'Portfolio Website',
+        }),
+      });
+      const result = await response.json();
+      if (response.ok && result.success) {
+        setStatusType('success');
+        setStatusMessage(t('contact.successMessage'));
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        console.error('Web3Forms error:', result);
+        setStatusType('error');
+        setStatusMessage(t('contact.errorMessage'));
+      }
+    } catch (error) {
+      console.error('Web3Forms request failed:', error);
+      setStatusType('error');
+      setStatusMessage(t('contact.errorMessage'));
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -1372,15 +1408,14 @@ function App() {
                         <ul>
                           <li>
                             <p>
-                              <label>{t('contact.labels.address')}:</label>
-                              <span>{t('contact.address')}</span>
-                            </p>
-                          </li>
-                          <li>
-                            <p>
                               <label>{t('contact.labels.email')}:</label>
                               <span>
-                                <a href={`mailto:${t('contact.email')}`}>
+                                <a
+                                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${t('contact.email')}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ color: '#E3872D', fontWeight: 600 }}
+                                >
                                   {t('contact.email')}
                                 </a>
                               </span>
@@ -1390,22 +1425,13 @@ function App() {
                             <p>
                               <label>{t('contact.labels.phone')}:</label>
                               <span>
-                                <a href="https://zalo.me/0867669605" target="_blank" rel="noreferrer">
-                                  {t('contact.phone')}
-                                </a>
-                              </span>
-                            </p>
-                          </li>
-                          <li>
-                            <p>
-                              <label>{t('contact.labels.website')}:</label>
-                              <span>
                                 <a
-                                  href={`https://${t('contact.website')}`}
+                                  href="https://zalo.me/0867669605"
                                   target="_blank"
                                   rel="noreferrer"
+                                  style={{ color: '#E3872D', fontWeight: 600 }}
                                 >
-                                  {t('contact.website')}
+                                  {t('contact.phone')}
                                 </a>
                               </span>
                             </p>
@@ -1419,16 +1445,22 @@ function App() {
                           <form className="contact_form" onSubmit={handleSendMessage}>
                             {statusMessage && (
                               <div
+                                role="alert"
                                 style={{
                                   padding: '12px 16px',
                                   marginBottom: '16px',
-                                  background: 'rgba(229, 75, 75, 0.15)',
-                                  border: '1px solid #e54b4b',
+                                  background:
+                                    statusType === 'success'
+                                      ? 'rgba(34, 160, 90, 0.12)'
+                                      : 'rgba(229, 75, 75, 0.12)',
+                                  border: `1px solid ${statusType === 'success' ? '#22a05a' : '#e54b4b'}`,
                                   borderRadius: '6px',
-                                  color: '#fff',
+                                  color: statusType === 'success' ? '#14703d' : '#b42323',
                                   fontSize: '14px',
+                                  fontWeight: 600,
                                 }}
                               >
+                                {statusType === 'success' ? '✓ ' : '✕ '}
                                 {statusMessage}
                               </div>
                             )}
@@ -1453,6 +1485,16 @@ function App() {
                               />
                             </div>
                             <div className="wrap">
+                              <input
+                                id="subject"
+                                type="text"
+                                placeholder={t('contact.yourSubject')}
+                                value={formData.subject}
+                                onChange={handleInputChange}
+                                required
+                              />
+                            </div>
+                            <div className="wrap">
                               <textarea
                                 id="message"
                                 placeholder={t('contact.yourMessage')}
@@ -1463,11 +1505,25 @@ function App() {
                             </div>
                             <div className="arlo_tm_button">
                               <a
-                                id="send_message"
                                 href="#contact"
+                                aria-disabled={isSending}
                                 onClick={handleSendMessage}
+                                style={
+                                  isSending
+                                    ? { opacity: 0.65, pointerEvents: 'none', cursor: 'not-allowed' }
+                                    : undefined
+                                }
                               >
-                                <span>{t('contact.sendMessage')}</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                  {isSending && (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                                      <path d="M12 2a10 10 0 0 1 10 10">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
+                                      </path>
+                                    </svg>
+                                  )}
+                                  {isSending ? t('contact.sending') : t('contact.sendMessage')}
+                                </span>
                               </a>
                             </div>
                           </form>
